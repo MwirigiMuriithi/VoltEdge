@@ -151,38 +151,38 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* New Section: Alternating Images and Text */}
         <section id="image-text-section" className="image-text-section">
-          <div className="image-text-item">
-            <img src={image1} alt="Image 1" className="image" />
-            <div className="text">
-            <p>Manage your energy seamlessly.</p>
-            <p>Manage your energy seamlessly.</p>
-            <p>Manage your energy seamlessly.</p>
-            <p>Manage your energy seamlessly.</p>
-            </div>
-          </div>
+  <div className="image-text-item">
+    <img src={image1} alt="Energy Management" className="image" />
+    <div className="text">
+      <p>Take control of your energy usage with smart management tools.</p>
+      <p>Track, monitor, and optimize your energy consumption effortlessly.</p>
+      <p>Save on energy bills while contributing to a sustainable future.</p>
+      <p>Empower yourself with efficient, renewable energy solutions.</p>
+    </div>
+  </div>
 
-          <div className="image-text-item reverse">
-            <img src={image2} alt="Image 2" className="image" />
-            <div className="text">
-            <p>Manage your energy seamlessly.</p>
-            <p>Manage your energy seamlessly.</p>
-            <p>Manage your energy seamlessly.</p>
-            <p>Manage your energy seamlessly.</p>
-            </div>
-          </div>
+  <div className="image-text-item reverse">
+    <img src={image2} alt="Energy Storage" className="image" />
+    <div className="text">
+      <p>Store renewable energy for use whenever you need it most.</p>
+      <p>Maximize energy efficiency with advanced storage solutions.</p>
+      <p>Reduce reliance on the grid by storing your surplus energy.</p>
+      <p>Make your home or business more resilient with energy storage.</p>
+    </div>
+  </div>
 
-          <div className="image-text-item">
-            <img src={image3} alt="Image 3" className="image" />
-            <div className="text">
-            <p>Manage your energy seamlessly.</p>
-            <p>Manage your energy seamlessly.</p>
-            <p>Manage your energy seamlessly.</p>
-            <p>Manage your energy seamlessly.</p>
-            </div>
-          </div>
-        </section>
+  <div className="image-text-item">
+    <img src={image3} alt="Advanced Energy Solutions" className="image" />
+    <div className="text">
+      <p>Unlock the power of advanced energy solutions for sustainability.</p>
+      <p>Track your energy generation and usage with cutting-edge technology.</p>
+      <p>Stay ahead with innovations that transform how you use energy.</p>
+      <p>Be part of the renewable revolution and embrace energy independence.</p>
+    </div>
+  </div>
+</section>
+
 
         <section id="cta" className="cta">
           <h2>Ready to Transition to Clean Energy?</h2>

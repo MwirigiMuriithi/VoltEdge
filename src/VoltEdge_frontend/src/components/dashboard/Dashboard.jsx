@@ -586,15 +586,16 @@
 
 
 import React, { useEffect, useState } from 'react';
-import { Bar } from 'react-chartjs-2'; // Import Bar chart from chartjs
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { Line } from 'react-chartjs-2'; // Import Line chart from chartjs
+import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend } from 'chart.js'; 
 import './Dashboard.css';
 
 // Register necessary components for Chart.js
 ChartJS.register(
   CategoryScale,
   LinearScale,
-  BarElement,
+  LineElement,
+  PointElement, // Register PointElement
   Title,
   Tooltip,
   Legend
@@ -606,6 +607,7 @@ function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [darkMode, setDarkMode] = useState(false); 
   const [tokens, setTokens] = useState(0);
+  const [chartInstance, setChartInstance] = useState(null); // Store the chart instance
 
   // Calculate summary stats for energy usage
   const calculateSummary = () => {
@@ -623,7 +625,13 @@ function Dashboard() {
 
     fetchEnergyUsage();
     fetchRecommendations();
-  }, [darkMode]);
+    
+    return () => {
+      if (chartInstance) {
+        chartInstance.destroy(); // Clean up chart when component unmounts or updates
+      }
+    };
+  }, [darkMode, energyUsage]);
 
   const fetchEnergyUsage = async () => {
     setLoading(true);
@@ -650,7 +658,7 @@ function Dashboard() {
     setLoading(false);
   };
 
-  const formatBarChartData = () => {
+  const formatLineChartData = () => {
     const timestamps = energyUsage.map((usage) =>
       new Date(usage.timestamp).toLocaleDateString()
     );
@@ -664,17 +672,23 @@ function Dashboard() {
         {
           label: "Energy Consumption (kWh)",
           data: consumption,
-          backgroundColor: "rgba(75, 192, 192, 0.7)",
+          borderColor: "rgba(75, 192, 192, 1)",
+          backgroundColor: "rgba(75, 192, 192, 0.2)",
+          fill: true, 
         },
         {
           label: "Energy Production (kWh)",
           data: production,
-          backgroundColor: "rgba(255, 165, 0, 0.7)",
+          borderColor: "rgba(255, 165, 0, 1)",
+          backgroundColor: "rgba(255, 165, 0, 0.2)",
+          fill: true, 
         },
         {
           label: "Energy Sales (kWh)",
           data: surplus,
-          backgroundColor: "rgba(138, 43, 226, 0.7)",
+          borderColor: "rgba(138, 43, 226, 1)",
+          backgroundColor: "rgba(138, 43, 226, 0.2)",
+          fill: true,
         },
       ],
     };
@@ -701,10 +715,6 @@ function Dashboard() {
   return (
     <div className={`dashboard-container ${darkMode ? "dark-mode" : ""}`}>
       <div className="dashboard-header">
-        <h1>Energy Dashboard</h1>
-        <button onClick={toggleDarkMode} className="btn-dark-mode">
-          Toggle Dark Mode
-        </button>
       </div>
 
       {loading && <p>Loading...</p>}
@@ -733,34 +743,43 @@ function Dashboard() {
         </div>
 
         <div className="overview-container">
-          {/* Stacked Bar Chart */}
+          {/* Line Graph */}
           <div className="chart-container">
             {energyUsage.length > 0 ? (
-              <Bar
-                data={formatBarChartData()}
+              <Line
+                data={formatLineChartData()}
                 options={{
                   responsive: true,
                   plugins: {
                     legend: { display: true },
+                    tooltip: {
+                      callbacks: {
+                        label: function (tooltipItem) {
+                          return `${tooltipItem.dataset.label}: ${tooltipItem.raw} kWh`;
+                        },
+                      },
+                    },
                   },
                   scales: {
-                    x: { stacked: true },
-                    y: { stacked: true },
+                    x: {
+                      title: {
+                        display: true,
+                        text: 'Date',
+                      },
+                    },
+                    y: {
+                      title: {
+                        display: true,
+                        text: 'kWh',
+                      },
+                    },
                   },
                 }}
+                getDatasetAtEvent={(dataset) => setChartInstance(dataset.chart)} // Save chart instance
               />
             ) : (
               <p>No energy data available.</p>
             )}
-          </div>
-
-          {/* Energy Consumption, Production, and Sales Explanation */}
-          <div className="description-container">
-            <h3>How to Read the Chart:</h3>
-            <p><strong>Energy Consumption (kWh)</strong>: This represents the total energy consumed by your home or business from the grid. It is depicted by the light blue bars. A higher consumption indicates more energy usage.</p>
-            <p><strong>Energy Production (kWh)</strong>: This shows the amount of energy you have generated, typically from solar panels or other renewable sources. The orange bars represent the total energy produced. The more you generate, the less you need to consume from the grid.</p>
-            <p><strong>Energy Sales (kWh)</strong>: This is the surplus energy that you have sold back to the grid or to other users. The purple bars represent this excess energy, which can earn you tokens or provide savings. It is a positive way to contribute to the grid while reducing your own energy costs.</p>
-            <p><strong>Goal:</strong> The aim is to reduce energy consumption from the grid, increase energy production through renewable sources, and maximize energy sales to contribute back to the community or earn benefits.</p>
           </div>
         </div>
 
